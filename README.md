@@ -34,3 +34,10 @@
 
 1. Для работы с WSGI/ASGI-сервером база данных использует специального юзера.
 2. Для взаимодействия между контейнерами используйте docker compose.
+
+## Взаимодействие
+`docker-compose -f docker-compose.prod.yml up -d --build` - запуск Production версии
+
+`docker-compose up -d --build` - запуск Dev версии
+
+`docker-compose down -v` - убить контейнеры

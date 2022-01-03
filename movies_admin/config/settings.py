@@ -56,10 +56,6 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
      'default': {
         'ENGINE': env('DB_ENGINE'),
         'NAME': env('DB_NAME'),
@@ -102,6 +98,7 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
