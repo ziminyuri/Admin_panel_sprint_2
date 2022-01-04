@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.list import BaseListView
-from movies.models import FilmWork
+from movies.models import FilmWork, FilmWorkPerson
 
 
 class MoviesApiMixin:
@@ -15,17 +15,18 @@ class MoviesApiMixin:
     def render_to_response(context):
         return JsonResponse(context, json_dumps_params={'indent': ' '})
 
-    @staticmethod
-    def get_queryset():
+    @classmethod
+    def get_queryset(cls):
         return FilmWork.objects.all().prefetch_related('genre', 'person').\
             values('id', 'title', 'description', 'creation_date', 'rating', 'type').\
             annotate(genres=ArrayAgg("genres__name", distinct=True)). \
-            annotate(actors=ArrayAgg("persons__full_name", distinct=True,
-                                     filter=Q(filmworkperson__role="actor"))).\
-            annotate(directors=ArrayAgg("persons__full_name", distinct=True,
-                                        filter=Q(filmworkperson__role="director"))).\
-            annotate(writers=ArrayAgg("persons__full_name", distinct=True,
-                                      filter=Q(filmworkperson__role="writer")))
+            annotate(actors=cls._aggregate_person(role=FilmWorkPerson.Role.ACTOR),
+                     directors=cls._aggregate_person(role=FilmWorkPerson.Role.DIRECTOR),
+                     writers=cls._aggregate_person(role=FilmWorkPerson.Role.WRITER))
+
+    @classmethod
+    def _aggregate_person(cls, role):
+        return ArrayAgg("persons__full_name", distinct=True, filter=Q(filmworkperson__role=role))
 
 
 class Movies(MoviesApiMixin, BaseListView):
