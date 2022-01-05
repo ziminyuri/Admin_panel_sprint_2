@@ -36,7 +36,14 @@
 2. Для взаимодействия между контейнерами используйте docker compose.
 
 ## Взаимодействие
-`docker-compose -f docker-compose.prod.yml up -d --build` - запуск Production версии
+`docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d` - запуск Production версии
+
+Миграции:
+
+`docker-compose exec web python manage.py migrate movies 0001_initial --fake --noinput`
+`docker-compose exec web python manage.py migrate --noinput`
+
+`docker-compose exec web python manage.py collectstatic` - cобрать статику
 
 `docker-compose up -d --build` - запуск Dev версии
 

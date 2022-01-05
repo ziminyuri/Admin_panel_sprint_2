@@ -19,10 +19,8 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
       - ./movies_admin/config/db_schema.sql:/docker-entrypoint-initdb.d/1-init.sql
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=1234
-      - POSTGRES_DB=movies_database
+    env_file:
+      - ./movies_admin/.env.dev
 
     ports:
       - 5432:5432
