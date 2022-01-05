@@ -13,14 +13,12 @@ RUN apk update \
 
 # устанавливаем зависимости
 RUN pip install --upgrade pip
-COPY ./requirements.txt .
+COPY ./requirements/*.txt requirements/
 RUN --mount=type=cache,target=/root/.cache/pip \
-        pip install -r requirements.txt
+        pip install -r requirements/dev.txt
 
 # копируем содержимое текущей папки в контейнер
 COPY . .
 
 # run entrypoint.sh
 ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
-
-CMD ["gunicorn", "-w", "1", "config.wsgi:application", "--bind", "0.0.0.0:8000"]
