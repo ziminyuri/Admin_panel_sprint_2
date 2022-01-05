@@ -5,6 +5,7 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./movies_admin/:/usr/src/app/
+      - .cache/pip-docker/:/root/.cache/pip
     ports:
       - 8000:8000
     env_file:

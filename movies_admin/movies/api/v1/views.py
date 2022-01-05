@@ -1,5 +1,4 @@
 from django.contrib.postgres.aggregates import ArrayAgg
-from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
 from django.views.generic.detail import BaseDetailView
