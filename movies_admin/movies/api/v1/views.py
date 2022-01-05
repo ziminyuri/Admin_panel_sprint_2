@@ -19,8 +19,8 @@ class MoviesApiMixin:
     def get_queryset(cls):
         return FilmWork.objects.all().prefetch_related('genre', 'person').\
             values('id', 'title', 'description', 'creation_date', 'rating', 'type').\
-            annotate(genres=ArrayAgg("genres__name", distinct=True)). \
-            annotate(actors=cls._aggregate_person(role=FilmWorkPerson.Role.ACTOR),
+            annotate(genres=ArrayAgg("genres__name", distinct=True),
+                     actors=cls._aggregate_person(role=FilmWorkPerson.Role.ACTOR),
                      directors=cls._aggregate_person(role=FilmWorkPerson.Role.DIRECTOR),
                      writers=cls._aggregate_person(role=FilmWorkPerson.Role.WRITER))
 
@@ -29,21 +29,22 @@ class MoviesApiMixin:
         return ArrayAgg("persons__full_name", distinct=True, filter=Q(filmworkperson__role=role))
 
 
-class Movies(MoviesApiMixin, BaseListView):
+class MoviesListView(MoviesApiMixin, BaseListView):
+    paginate_by = 50
 
     def get_context_data(self, **kwargs):
-        paginator = Paginator(self.get_queryset(), 50)
-        page_number = self.request.GET.get('page', '1')
-        page_number = str(paginator.num_pages) if page_number == 'last' else page_number
-        page_obj = paginator.get_page(page_number)
-        page = paginator.page(page_number)
+        queryset = self.get_queryset()
+        paginator, page, queryset, is_paginated = self.paginate_queryset(
+            queryset,
+            self.paginate_by
+        )
 
         return {
-            'results': list(page_obj),
+            'results': list(queryset.values()),
             'count': paginator.count,
             'total_pages': paginator.num_pages,
-            'next': int(page_number) + 1 if page.has_next() else None,
-            'prev': int(page_number) - 1 if page.has_previous() else None
+            'next': page.next_page_number() if page.has_next() else None,
+            'prev': page.previous_page_number() if page.has_previous() else None
         }
 
 
@@ -51,4 +52,4 @@ class MoviesDetailApi(MoviesApiMixin, BaseDetailView):
     pk_url_kwarg = 'id'
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data().get('object')
+        return super().get_context_data(**kwargs).get('object')
