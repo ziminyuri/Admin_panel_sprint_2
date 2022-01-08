@@ -19,6 +19,3 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 # копируем содержимое текущей папки в контейнер
 COPY . .
-
-# run entrypoint.sh
-ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
