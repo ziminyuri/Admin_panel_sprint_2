@@ -41,6 +41,7 @@
 Миграции:
 
 `docker-compose exec web python manage.py migrate movies 0001_initial --fake --noinput`
+
 `docker-compose exec web python manage.py migrate --noinput`
 
 `docker-compose exec web python manage.py collectstatic` - cобрать статику
